@@ -38,56 +38,25 @@ grid, maximum = [], 0
 for i in rows:
     grid.append(i.split(' '))
 
-print 'left-right'
-for row in range(0,20):
-    for col in range(0,17):
-        subgrid = grid[row][col:col+4]
-        prod = 1
-        for i in subgrid:
-            prod *= int(i)
-        if prod > maximum:
-            print 'new maximum: %s (+%s)' % (prod, prod-maximum)
-            maximum = prod
+def get_product(row_min, row_max, col_min, col_max, inc_row, inc_col):
+    maxi = 0
+    for row in range(row_min, row_max):
+        for col in range(col_min, col_max):
+            subgrid = []
+            for i in range(4):
+                subgrid.append(grid[row+inc_row*i][col+inc_col*i])
+            prod = 1
+            for i in subgrid:
+                prod *= int(i)
+            if prod > maxi:
+                #print 'new maximum: %s (+%s)' % (prod, prod-maximum)
+                maxi = prod
+    return maxi
 
-print 'up-down'
-for row in range(0,17):
-    for col in range(0,20):
-        subgrid = []
-        for i in range(4):
-            subgrid.append(grid[row+i][col])
-        prod = 1
-        for i in subgrid:
-            prod *= int(i)
-        if prod > maximum:
-            print 'new maximum: %s (+%s)' % (prod, prod-maximum)
-            maximum = prod
-
-print 'diagonal /'
-for row in range(0,17):
-    for col in range(3,20):
-        subgrid = []
-        for i in range(4):
-            subgrid.append(grid[row+i][col-i])
-        prod = 1
-        for i in subgrid:
-            prod *= int(i)
-        if prod > maximum:
-            print 'new maximum: %s (+%s)' % (prod, prod-maximum)
-            maximum = prod
-
-print 'diagonal \\'
-for row in range(0,17):
-    for col in range(0,17):
-        subgrid = []
-        for i in range(4):
-            subgrid.append(grid[row+i][col+i])
-        prod = 1
-        for i in subgrid:
-            prod *= int(i)
-        if prod > maximum:
-            print 'new maximum: %s (+%s)' % (prod, prod-maximum)
-            maximum = prod
-
-print maximum
+print max(
+get_product(0, 20, 0, 17, 0, 1), # left-right
+get_product(0, 17, 0, 20, 1, 0), # up-down
+get_product(0, 17, 3, 20, 1, -1), # diagonal /
+get_product(0, 17, 0, 17, 1, 1)) # diagonal \
 
 print time.clock()-start
