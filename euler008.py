@@ -31,13 +31,13 @@ number = '''
 71636269561882670428252483600823257530420752963450
 '''.replace('\n', '')
 
-def sum(l):
-    return 1 if not l else int(l[0]) * sum(l[1:])
-
 results = []
 for i in range(0, len(number)-4):
-    sub = list(number[i:i+5])
-    results.append(sum(sub))
+    probe = list(number[i:i+5])
+    product = 1
+    for i in probe:
+        product *= int(i)
+    results.append(product)
 
 print max(results)
 
