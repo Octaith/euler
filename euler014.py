@@ -19,17 +19,22 @@ import time
 
 start = time.clock()
 
+cache = {}
 def collatz(n):
-    seq = [n]
+    chain = 1
     i = n
     while i>1:
+        if i in cache:
+            chain += cache[i]
+            break
         if i%2 == 0:
             i = i/2
-            seq.append(i)
+            chain += 1
         else:
             i = 3*i+1
-            seq.append(i)
-    return len(seq)
+            chain += 1
+    cache[n] = chain
+    return chain
 
 longest = 0
 
