@@ -8,6 +8,7 @@ There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73
 How many circular primes are there below one million?
 '''
 import time
+import sys
 
 start = time.clock()
 
@@ -21,20 +22,32 @@ def sieve(k):
                 s.discard(j)
     return sorted(s)
 
+print 'generating one million primes'
 primes = sieve(10**6)
-sum = 0
-for i in primes:
-    digits = list(str(i))
-    circ = True
-    for k in range(len(digits)):
-        circular = digits[k:] + digits[:k]
-        if not int(''.join(circular)) in primes:
-            circ = False
-            break
-    if circ:
-        sum += 1
-        print sum, i
+print 'starting with %s primes' % len(primes)
+circs = set()
 
-print sum
+def circulate(s):
+    for i in range(len(s)):
+        yield s[i:] + s[:i]
+
+c = 0
+c_step = len(primes)/79
+for i in primes:
+    if not c%c_step:
+        sys.stdout.write('.')
+    c+=1
+    if i not in circs:
+        digits = str(i)
+        circ = True
+        for k in circulate(digits):
+            if not int(k) in primes:
+                circ = False
+                break
+        if circ:
+            for k in circulate(digits):
+                circs.add(int(k))
+
+print len(circs)
 
 print time.clock()-start
