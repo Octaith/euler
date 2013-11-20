@@ -32,10 +32,11 @@ def sieve(k):
     return sorted(s)
 
 primes = sieve(13000)
+b_primes = sieve(1000)
 
 m = (0, 0, 0)
 for a in range(-999, 1000):
-    for b in xrange(-999, 1000):
+    for b in b_primes:
         n = 0
         while True:
             q = n**2 + a*n + b
@@ -47,7 +48,6 @@ for a in range(-999, 1000):
             m = (n, a, b)
             print m
 
-print m
 print m[1]*m[2]
 
 print time.clock()-start
