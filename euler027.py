@@ -32,21 +32,20 @@ def sieve(k):
     return sorted(s)
 
 primes = sieve(13000)
-b_primes = sieve(1000)
+b_primes = sieve(1000)[::-1]
 
 m = (0, 0, 0)
-for a in range(-999, 1000):
-    for b in b_primes:
-        n = 0
-        while True:
-            q = n**2 + a*n + b
-            if q in primes:
+
+for b in b_primes:
+    if b<m[0]:
+        break
+    for a in range(-b, 1000, 2):
+            n = 0
+            while n**2 + a*n + b in primes:
                 n += 1
-            else:
-                break
-        if n > m[0]:
-            m = (n, a, b)
-            print m
+            if n > m[0]:
+                m = (n, a, b)
+                print m
 
 print m[1]*m[2]
 
