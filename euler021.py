@@ -9,15 +9,18 @@ For example, the proper divisors of 220 are 1, 2, 4, 5, 10, 11, 20, 22, 44, 55 a
 Evaluate the sum of all the amicable numbers under 10000.
 '''
 import time
+import math
 
 start = time.clock()
 
 def d(n):
-    sum = 1
-    for i in xrange(2, int(n/2)+1):
+    s = 1
+    t = math.sqrt(n)
+    for i in xrange(2, int(t)+1):
         if n%i == 0:
-            sum += i
-    return sum
+            s += i + n/i
+    if t == int(t): s -= t
+    return s
 
 sum = 0
 for a in xrange(1, 10000):
