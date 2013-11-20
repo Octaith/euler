@@ -27,17 +27,13 @@ def tn(n):
     return n*(n+1)/2
 
 def factors(n):
-    if (n == 1): return [1]
-    a = []
-    i = 1
-    max = n
-    while (i < max):
-        if (n % i == 0):
-            a.append(i)
-            if (i != int(n/i) ): a.append(int(n/i))
-            max = int(n/i)
-        i += 1   
-    return len(a)
+    s = 1
+    t = math.sqrt(n)
+    for i in xrange(2, int(t)+1):
+        if n%i == 0:
+            s += 2
+    if t == int(t): s -= 1
+    return s
 
 i = 2
 while factors(tn(i))<500:
