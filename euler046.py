@@ -34,13 +34,10 @@ primes = sieve(10000)
 for i in xrange(9, 10000, 2):
     if i not in primes:
         flag = True
-        for p in primes:
-            if p >= i:
+        for s in xrange(1, i):
+            if i-2*s**2 in primes:
+                flag = False
                 break
-            for s in xrange(1, int(math.sqrt(i-p))+1):
-                if p+2*s**2 == i:
-                    flag = False
-                    break
         if flag:
             print i
             break
