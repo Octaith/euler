@@ -17,13 +17,23 @@ import sys
 
 start = time.clock()
 
+forecast = {}
 def sequence(n):
+    f = set()
     while True:
         r = 0
         while n:
             r += (n%10)*(n%10)
             n /= 10
+        f.add(r)
+        if r in forecast:
+            if forecast[r] == 1 or forecast[r] == 89:
+                for i in f:
+                    forecast[i] = forecast[r]
+                return forecast[r]
         if r == 1 or r == 89:
+            for i in f:
+                forecast[i] = r
             return r
         n = r
 
