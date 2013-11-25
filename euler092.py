@@ -18,24 +18,21 @@ import sys
 start = time.clock()
 
 def sequence(n):
-    #print '\n===', n, '==='
     while True:
         r = 0
-        for i in str(n):
-            r += int(i)**2
-        #sys.stdout.write(str(n)+' ')
+        while n:
+            r += (n%10)*(n%10)
+            n /= 10
         if r == 1 or r == 89:
             return r
         n = r
 
 c = 0
 for i in xrange(2, 10**7):
-    if not i%(10**4):
-        sys.stdout.write('\r'+str(i*100.0/10**7)+' %')
     t = sequence(i)
     if t == 89:
         c += 1
 
-print '\n\n',c
+print c
 
 print time.clock()-start
