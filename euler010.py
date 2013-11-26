@@ -12,21 +12,18 @@ start = time.clock()
 
 primes = [2]
 
-def is_prime(n):
-    for i in primes:
-        if i>math.sqrt(n):
-            break
-        if n%i == 0:
-            return False
-    return True
+def sieve(k):
+    s = set(range(3, k, 2))
+    s.add(2)
 
-i, sum = 3, 2
-while i < 2*10**6:
-    if is_prime(i):
-        primes.append(i)
-        sum += i
-    i += 2
+    for i in range(3, k, 2):
+        if i in s:
+            for j in range(i ** 2, k, i * 2):
+                s.discard(j)
+    return sorted(s)
 
-print sum
+primes = sieve(2000000)
+
+print sum(primes)
 
 print time.clock()-start
