@@ -23,38 +23,22 @@ def sieve(k):
     return sorted(s), s
 
 
-def is_probable_prime(n, k=7):
-    """use Rabin-Miller algorithm to return True (n is probably prime)
-        or False (n is definitely composite)"""
-    if n < 6:  # assuming n >= 0 in all cases... shortcut small cases here
-        return [False, False, True, True, False, True][n]
-    elif n & 1 == 0:  # should be faster than n % 2
-        return False
-    else:
-        s, d = 0, n - 1
-        while d & 1 == 0:
-            s, d = s + 1, d >> 1
-        for a in random.sample(xrange(2, min(n - 2, sys.maxint)), min(n - 4, k)):
-            x = pow(a, d, n)
-            if x != 1 and x + 1 != n:
-                for r in xrange(1, s):
-                    x = pow(x, 2, n)
-                    if x == 1:
-                        return False  # composite for sure
-                    elif x == n - 1:
-                        a = 0  # so we know loop didn't continue to end
-                        break  # could be strong liar, try another a
-                if a:
-                    return False  # composite if we reached end of this loop
-        return True  # probably prime if reached end of outer loop
+def isprime(n):
+    if n % 2 == 0:
+        return n == 2
+    d = 3
+    while d * d <= n:
+        if n % d == 0:
+            return False
+        d += 2
+    return True
 
 
 def is_prime(n):
     if n < primes[-1]:
         return n in primeset
     else:
-        print n, 'prob'
-        return is_probable_prime(n)
+        return isprime(n)
 
 
 def int_concat(list):
@@ -76,22 +60,48 @@ def find_candidates(lim):
     return s
 
 
+# def intersect(todepth, depth=2, nums={}, newset={}):
+#     # print '| '*depth, len(nums), sorted(list(nums))
+#     if len(nums) == todepth and candidate(nums):
+#         print sorted(list(nums))
+#         print sum(nums)
+#         print time.clock()-start
+#         os._exit(0)
+#     if newset:
+#         for a in newset:
+#             for b in candidates.keys():
+#                 if candidate([a, b]):
+#                     inter = set(candidates[b]) & set(candidates[b])
+#                     newnums = set(nums)
+#                     if len(inter) and depth < todepth and b not in newnums:
+#                         newnums.add(b)
+#                         intersect(todepth, depth=len(newnums), nums=newnums, newset=inter)
+#     else:
+#         for a, b in combinations(candidates.keys(), 2):
+#             inter = set(candidates[a]) & set(candidates[b])
+#             if inter:
+#                 intersect(todepth, depth=depth, nums={a, b}, newset=inter)
+
+
 def intersect(todepth, depth=2, nums={}, newset={}):
-    # print '| '*depth, len(nums), sorted(list(nums))
-    if len(nums) == todepth and candidate(nums):
-        print sorted(list(nums))
-        print sum(nums)
-        print time.clock()-start
-        os._exit(0)
     if newset:
-        for a in newset:
-            for b in candidates.keys():
-                if candidate([a, b]):
-                    inter = set(candidates[b]) & set(candidates[b])
-                    newnums = set(nums)
-                    if len(inter) and depth < todepth and b not in newnums:
-                        newnums.add(b)
-                        intersect(todepth, depth=len(newnums), nums=newnums, newset=inter)
+        for b in candidates.keys():
+            newnums = set(nums)
+            if b in nums:
+                return
+            newnums.add(b)
+            if candidate(newnums):
+                if len(newnums) == todepth:
+                    print sorted(list(newnums))
+                    print sum(newnums)
+                    print time.clock()-start
+                    os._exit(0)
+                else:
+                    for a in newset:
+                        if candidate([a, b]):
+                            inter = set(candidates[a]) & set(candidates[b])
+                            if inter and depth < todepth:
+                                intersect(todepth, depth=len(newnums), nums=newnums, newset=inter)
     else:
         for a, b in combinations(candidates.keys(), 2):
             inter = set(candidates[a]) & set(candidates[b])
@@ -99,7 +109,7 @@ def intersect(todepth, depth=2, nums={}, newset={}):
                 intersect(todepth, depth=depth, nums={a, b}, newset=inter)
 
 
-primes, primeset = sieve(10**6)
+primes, primeset = sieve(10**4)
 print len(primes), 'primes'
 candidates = find_candidates(125)
 print len(candidates), 'candidates'
