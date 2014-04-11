@@ -5,10 +5,7 @@ The primes 3, 7, 109, and 673, are quite remarkable. By taking any two primes an
 Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
 '''
 from itertools import permutations, combinations
-import os
 import time
-import random
-import sys
 start = time.clock()
 
 
@@ -60,57 +57,36 @@ def find_candidates(lim):
     return s
 
 
-# def intersect(todepth, depth=2, nums={}, newset={}):
-#     # print '| '*depth, len(nums), sorted(list(nums))
-#     if len(nums) == todepth and candidate(nums):
-#         print sorted(list(nums))
-#         print sum(nums)
-#         print time.clock()-start
-#         os._exit(0)
-#     if newset:
-#         for a in newset:
-#             for b in candidates.keys():
-#                 if candidate([a, b]):
-#                     inter = set(candidates[b]) & set(candidates[b])
-#                     newnums = set(nums)
-#                     if len(inter) and depth < todepth and b not in newnums:
-#                         newnums.add(b)
-#                         intersect(todepth, depth=len(newnums), nums=newnums, newset=inter)
-#     else:
-#         for a, b in combinations(candidates.keys(), 2):
-#             inter = set(candidates[a]) & set(candidates[b])
-#             if inter:
-#                 intersect(todepth, depth=depth, nums={a, b}, newset=inter)
-
-
-def intersect(todepth, depth=2, nums={}, newset={}):
+results = []
+def intersect(todepth, nums={}, newset={}):
     if newset:
         for b in candidates.keys():
             newnums = set(nums)
             if b in nums:
-                return
+                break
             newnums.add(b)
             if candidate(newnums):
                 if len(newnums) == todepth:
-                    print sorted(list(newnums))
-                    print sum(newnums)
-                    print time.clock()-start
-                    os._exit(0)
+                    print 'found: sum({}) = {}, elapsed {:1.2f}s'.format(sorted(list(newnums)), sum(newnums), time.clock()-start)
+                    result = {
+                        'result': sorted(list(newnums)),
+                        'sum': sum(newnums)
+                        }
+                    results.append(result)
                 else:
-                    for a in newset:
-                        if candidate([a, b]):
-                            inter = set(candidates[a]) & set(candidates[b])
-                            if inter and depth < todepth:
-                                intersect(todepth, depth=len(newnums), nums=newnums, newset=inter)
+                    inter = newset & set(candidates[b])
+                    if inter and len(newnums) < todepth:
+                        intersect(todepth,  nums=newnums, newset=inter)
     else:
-        for a, b in combinations(candidates.keys(), 2):
-            inter = set(candidates[a]) & set(candidates[b])
-            if inter:
-                intersect(todepth, depth=depth, nums={a, b}, newset=inter)
+        for a in candidates.keys():
+            if candidates[a]:
+                intersect(todepth, nums={a}, newset=set(candidates[a]))
 
 
 primes, primeset = sieve(10**4)
 print len(primes), 'primes'
-candidates = find_candidates(125)
+candidates = find_candidates(1250)
 print len(candidates), 'candidates'
-print intersect(4)
+intersect(5)
+best = sorted(results, key=lambda x: x['sum'])[0]
+print 'and the winner is', best['sum']
