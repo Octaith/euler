@@ -20,30 +20,34 @@ Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum.
 from __future__ import division
 from functools import reduce
 from operator import mul
+from math import floor, sqrt
 import time
 start = time.clock()
 
 
 def phi(n):
-    primes = set(pFactors(n))
+    primes = set(fac(n))
     factors = [1-1/p for p in primes if not n % p]
     product = reduce(mul, factors, 1)
     return int(n*product)
 
 
-def pFactors(n):
-        """Finds the prime factors of 'n'"""
-        from math import sqrt
-        pFact, limit, check, num = [], int(sqrt(n)) + 1, 2, n
-        if n == 1:
-            return [1]
-        for check in range(2, limit):
-            while num % check == 0:
-                pFact.append(check)
-                num /= check
-        if num > 1:
-            pFact.append(num)
-        return pFact
+def fac(n):
+    '''http://rosettacode.org/wiki/Prime_decomposition#Python'''
+    step = lambda x: 1 + x*4 - (x//2)*2
+    maxq = long(floor(sqrt(n)))
+    d = 1
+    q = n % 2 == 0 and 2 or 3
+    while q <= maxq and n % q != 0:
+        q = step(d)
+        d += 1
+    res = []
+    if q <= maxq:
+        res.extend(fac(n//q))
+        res.extend(fac(q))
+    else:
+        res = [n]
+    return res
 
 
 candidates = {}
@@ -51,7 +55,7 @@ t = 10**6
 i = time.clock()
 for n in xrange(2, t+1):
     candidates[n] = n/phi(n)
-    if not n % 1000:
+    if not n % 50000:
         print '{:1d}/{:1d}/{:1.3f}'.format(n, t, time.clock()-i)
         i = time.clock()
 
