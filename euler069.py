@@ -18,38 +18,36 @@ It can be seen that n = 6 produces a maximum n/φ(n) for n ≤ 10.
 Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum.
 '''
 from __future__ import division
-from math import floor
-import fractions
+from functools import reduce
+from operator import mul
 import time
 start = time.clock()
 
 
-def sieve(k):
-    s = set(range(3, k, 2))
-    s.add(2)
-
-    for i in range(3, k, 2):
-        if i in s:
-            for j in range(i ** 2, k, i * 2):
-                s.discard(j)
-    return s
-
-
 def phi(n):
-    if n in primes:
-        o['primes'] += 1
-        return n-1
-    amount = 0
-    for k in range(1, n + 1):
-        if fractions.gcd(n, k) == 1:
-            amount += 1
-    return amount
+    primes = set(pFactors(n))
+    factors = [1-1/p for p in primes if not n % p]
+    product = reduce(mul, factors, 1)
+    return int(n*product)
 
 
-o = {'primes': 0}
+def pFactors(n):
+        """Finds the prime factors of 'n'"""
+        from math import sqrt
+        pFact, limit, check, num = [], int(sqrt(n)) + 1, 2, n
+        if n == 1:
+            return [1]
+        for check in range(2, limit):
+            while num % check == 0:
+                pFact.append(check)
+                num /= check
+        if num > 1:
+            pFact.append(num)
+        return pFact
+
+
 candidates = {}
-t = 1*10**4
-primes = sieve(t)
+t = 10**6
 i = time.clock()
 for n in xrange(2, t+1):
     candidates[n] = n/phi(n)
@@ -58,7 +56,5 @@ for n in xrange(2, t+1):
         i = time.clock()
 
 print max(candidates.iterkeys(), key=lambda x: candidates[x])
-print 'optimized'
-print o
 
 print '{:1.3f}s'.format(time.clock()-start)
